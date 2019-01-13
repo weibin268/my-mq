@@ -20,7 +20,7 @@ public class RabbitMqUtilsTest {
 
     @Test
     public void receive() throws InterruptedException {
-        RabbitMqUtils.receive("test01",c->{
+        RabbitMqUtils.receive(RabbitMqUtils.createChannel(),"test01",c->{
             System.out.println(c);
             try {
                 Thread.sleep(300);

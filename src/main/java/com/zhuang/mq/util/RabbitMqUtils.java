@@ -30,6 +30,14 @@ public class RabbitMqUtils {
         return connectionFactory;
     }
 
+    public static Channel createChannel() {
+        try {
+            return getConnectionFactory().newConnection().createChannel();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void send(String exchange, String routingKey, String message) {
         Connection connection = null;
         Channel channel = null;
@@ -65,17 +73,6 @@ public class RabbitMqUtils {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static Channel receive(String queue, ReceiveHandler receiveHandler) {
-        Channel channel = null;
-        try {
-            channel = getConnectionFactory().newConnection().createChannel();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        receive(channel, queue, receiveHandler);
-        return channel;
     }
 
     public static void receive(Channel channel, String queue, ReceiveHandler receiveHandler) {
