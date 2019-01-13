@@ -3,16 +3,15 @@ package com.zhuang.mq.activemq;
 import javax.jms.Connection;
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
-import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
-import com.zhuang.mq.MQConnector;
+import com.zhuang.mq.MqClient;
 
-public class ActiveMQConnector implements MQConnector {
+public class ActiveMqClient implements MqClient {
 
 	ActiveMQConnectionFactory connectionFactory;
 
@@ -28,11 +27,11 @@ public class ActiveMQConnector implements MQConnector {
 
 	String targetName;
 
-	public ActiveMQConnector(String url, String queueName) {
+	public ActiveMqClient(String url, String queueName) {
 		this(url, ActiveMQConnection.DEFAULT_USER, ActiveMQConnection.DEFAULT_PASSWORD, TargetType.Queue, queueName);
 	}
 
-	public ActiveMQConnector(String url, String userName, String password, TargetType targetType, String targetName) {
+	public ActiveMqClient(String url, String userName, String password, TargetType targetType, String targetName) {
 		this.connectionFactory = new ActiveMQConnectionFactory(userName, password, url);
 		this.targetType = targetType;
 	}

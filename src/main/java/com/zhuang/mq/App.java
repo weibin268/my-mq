@@ -14,7 +14,7 @@ public class App
 
     public static void main(String[] args) throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
+        factory.setHost("184.170.210.189");
         factory.setUsername("zwb");
         factory.setPassword("zwb");
         Connection connection = factory.newConnection();
