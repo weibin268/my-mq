@@ -1,9 +1,8 @@
 package com.zhuang.mq.util;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.*;
 import com.zhuang.mq.config.MyMqProperties;
+import com.zhuang.mq.handler.ReceiveHandler;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
@@ -63,6 +62,31 @@ public class RabbitMqUtils {
     public static void send(Channel channel, String exchange, String routingKey, String message) {
         try {
             channel.basicPublish(exchange, routingKey, null, message.getBytes("UTF-8"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Channel receive(String queue, ReceiveHandler receiveHandler) {
+        Channel channel = null;
+        try {
+            channel = getConnectionFactory().newConnection().createChannel();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        receive(channel, queue, receiveHandler);
+        return channel;
+    }
+
+    public static void receive(Channel channel, String queue, ReceiveHandler receiveHandler) {
+        Consumer consumer = new DefaultConsumer(channel) {
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+                String message = new String(body, "UTF-8");
+                receiveHandler.receive(message);
+            }
+        };
+        try {
+            channel.basicConsume(queue, true, consumer);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
