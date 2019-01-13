@@ -76,14 +76,21 @@ public class RabbitMqUtils {
     }
 
     public static void receive(Channel channel, String queue, ReceiveHandler receiveHandler) {
+        receive(channel, queue, receiveHandler, true);
+    }
+
+    public static void receive(Channel channel, String queue, ReceiveHandler receiveHandler, boolean autoAck) {
         Consumer consumer = new DefaultConsumer(channel) {
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 String message = new String(body, "UTF-8");
-                receiveHandler.receive(message);
+                boolean receiveResult = receiveHandler.handle(message);
+                if (!autoAck && receiveResult) {
+                    channel.basicAck(envelope.getDeliveryTag(), false);
+                }
             }
         };
         try {
-            channel.basicConsume(queue, true, consumer);
+            channel.basicConsume(queue, autoAck, consumer);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

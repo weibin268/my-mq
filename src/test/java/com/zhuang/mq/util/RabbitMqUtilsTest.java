@@ -13,7 +13,7 @@ public class RabbitMqUtilsTest {
     @Test
     public void send() throws IOException, TimeoutException {
         Channel channel = RabbitMqUtils.getConnectionFactory().newConnection().createChannel();
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 100; i++) {
             RabbitMqUtils.send(channel,"","test01","zwb" +i);
         }
     }
@@ -27,7 +27,9 @@ public class RabbitMqUtilsTest {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        });
+            if(c.contains("3"))return false;
+            return true;
+        },false);
 
         Thread.sleep(100000);
     }
